@@ -52,7 +52,7 @@ public class Device {
      * certificate is not supplied, or the supplied certificate does not work.
      *
      * @see #password
-     * @see #certificate
+     * @see #privateKey
      */
     String username;
 
@@ -61,7 +61,7 @@ public class Device {
      * certificate is not supplied, or the supplied certificate does not work.
      *
      * @see #username
-     * @see #certificate
+     * @see #privateKey
      */
     @ToString.Exclude
     String password;
@@ -71,19 +71,29 @@ public class Device {
     String maskedPassword;
 
     /**
-     * The private key certificate used to log in with, in PEM format (this normally starts
-     * <code>-----BEGIN RSA PRIVATE KEY-----</code>). Used in preference to the username and
-     * password, though if they are supplied they will be used as a backup if this certificate
-     * does not work.
+     * The username, used in conjunction with the private key, to log in with. Used in preference to
+     * the username and password, though if these are supplied they will be used as a backup if the
+     * private key does not work.
+     *
+     * @see #privateKey
+     * @see #username
+     */
+    String privateKeyUsername;
+
+    /**
+     * The private key used to log in with.  If supplied, will be used with the private key username
+     * in preference to the username and password. This should be supplied in PEM format (this
+     * normally starts <code>-----BEGIN RSA PRIVATE KEY-----</code>). Used in preference to the
+     * username and password, though if these are supplied they will be used as a backup if the
+     * private key does not work.
      *
      * @see #username
-     * @see #certificate
      */
     @ToString.Exclude
-    String certificate;
+    String privateKey;
 
-    @ToString.Include(name = "certificate")
-    String maskedCertificate;
+    @ToString.Include(name = "privateKey")
+    String maskedPrivateKey;
 
     /**
      * The maximum amount of time to wait when attempting to connect to the device. Defaults to
@@ -110,7 +120,8 @@ public class Device {
         final Integer port,
         final String username,
         final String password,
-        final String certificate,
+        final String privateKeyUsername,
+        final String privateKey,
         final NetconfSessionFactory netconfSessionFactory,
         final Duration connectTimeout,
         final Duration readTimeout
@@ -120,19 +131,27 @@ public class Device {
         this.username = username;
         this.password = password;
         this.maskedPassword = password == null ? null : "********";
-        this.certificate = certificate;
-        this.maskedCertificate = certificate == null ? null : "****************";
+        this.privateKeyUsername = privateKeyUsername;
+        this.privateKey = privateKey;
+        this.maskedPrivateKey = privateKey == null ? null : "****************";
         this.netconfSessionFactory = ofNullable(netconfSessionFactory)
             .orElseGet(NetconfSessionFactory::new);
         this.connectTimeout = ofNullable(connectTimeout).orElseGet(() -> Duration.ofSeconds(5));
         this.readTimeout = ofNullable(readTimeout).orElseGet(() -> Duration.ofSeconds(5));
 
-        if (username == null && password == null && certificate == null) {
-            throw new IllegalArgumentException("Credentials in the form of a client certificate"
-                + " and/or username and password must be supplied");
+        if (username == null && privateKeyUsername == null) {
+            throw new IllegalArgumentException("Credentials in the form of a username/password"
+                + " and/or private key username and certificate must be supplied"
+            );
         }
         if ((username == null && password != null) || (username != null && password == null)) {
             throw new IllegalArgumentException("A username must be supplied with a password");
+        }
+        if ((privateKeyUsername == null && privateKey != null)
+            || (privateKeyUsername != null && privateKey == null)) {
+            throw new IllegalArgumentException(
+                "A privateKeyUsername must be supplied with a privateKey"
+            );
         }
         log.info("New device created: {}", this);
     }
@@ -144,7 +163,7 @@ public class Device {
      * @throws NetconfException if a session could not be created.
      */
     public NetconfSession openSession() throws NetconfException {
-        if (certificate != null) {
+        if (privateKey != null) {
             try {
                 return netconfSessionFactory.createSessionUsingCertificate(this);
             } catch (final NetconfException e) {

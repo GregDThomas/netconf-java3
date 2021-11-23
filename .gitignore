@@ -1,3 +1,4 @@
 /.gradle/
 /.idea/
 /build/
+/src/integration-test/resources/secrets/*.yml

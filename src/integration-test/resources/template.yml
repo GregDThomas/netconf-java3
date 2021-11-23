@@ -1,0 +1,15 @@
+# This file contains a sample of how to set up an integration test.
+# Copy this file to the 'secrets' folder, and update it to reflect your local device - creating multiple files
+# if necessary.
+# When running integration tests, connections will be made to all devices defined in secrets/*.yml
+
+address: 192.168.12.1
+port: 830
+username: admin
+password: change-me
+certificate: |
+  -----BEGIN RSA PRIVATE KEY-----
+  ...
+  -----END RSA PRIVATE KEY-----
+connectTimeout: PT10S
+readTimeout: PT15S

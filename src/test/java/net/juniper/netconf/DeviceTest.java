@@ -26,7 +26,8 @@ class DeviceTest {
             .address("my-device")
             .username("my-username")
             .password("secret password")
-            .certificate("secret certificate")
+            .privateKeyUsername("cert-username")
+            .privateKey("secret certificate")
             .build();
 
         final String toString = device.toString();
@@ -42,8 +43,8 @@ class DeviceTest {
                 .address("my-device")
                 .build())
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("Credentials in the form of a client certificate"
-                + " and/or username and password must be supplied");
+            .hasMessageContaining("Credentials in the form of a username/password"
+                + " and/or private key username and certificate must be supplied");
     }
 
     @Test
@@ -58,9 +59,31 @@ class DeviceTest {
         assertThatThrownBy(() -> Device.builder()
             .address("my-device")
             .password("my-password")
+            .privateKeyUsername("cert-username")
             .build())
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining("A username must be supplied with a password");
+    }
+
+    @Test
+    void privateKeyMustBeSuppliedWithUsername() {
+        assertThatThrownBy(() -> Device.builder()
+            .address("my-device")
+            .username("my-user")
+            .password("my-secret")
+            .privateKey("my-secret-cert")
+            .build())
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("A privateKeyUsername must be supplied with a privateKey");
+
+        assertThatThrownBy(() -> Device.builder()
+            .address("my-device")
+            .username("my-user")
+            .password("my-secret")
+            .privateKeyUsername("cert-username")
+            .build())
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("A privateKeyUsername must be supplied with a privateKey");
     }
 
     @Test
@@ -68,7 +91,8 @@ class DeviceTest {
 
         final Device device = Device.builder()
             .address("my-device")
-            .certificate("secret certificate")
+            .privateKeyUsername("cert-username")
+            .privateKey("secret certificate")
             .netconfSessionFactory(netconfSessionFactory)
             .build();
 
@@ -109,7 +133,8 @@ class DeviceTest {
 
         final Device device = Device.builder()
             .address("my-device")
-            .certificate("my-certificate")
+            .privateKeyUsername("cert-username")
+            .privateKey("secret certificate")
             .username("my-username")
             .password("my-password")
             .netconfSessionFactory(netconfSessionFactory)

@@ -7,9 +7,10 @@ address: 192.168.12.1
 port: 830
 username: admin
 password: change-me
-certificate: |
+privateKey: |
   -----BEGIN RSA PRIVATE KEY-----
   ...
   -----END RSA PRIVATE KEY-----
-connectTimeout: PT10S
+connectTimeout: PT5S
+loginTimeout: PT10S
 readTimeout: PT15S

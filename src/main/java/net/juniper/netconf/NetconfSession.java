@@ -25,16 +25,13 @@ public class NetconfSession implements AutoCloseable {
         client = SshClient.setUpDefaultClient();
     }
 
-    void connectUsingCertificate() throws NetconfException {
-
-    }
-
-    void connectUsingUsernameAndPassword() throws NetconfException {
+    void connect() throws NetconfException {
 
         client.start();
         try {
             log.debug("Connecting to device at {}:{}",
-                device::getAddress, device::getPort);
+                device::getAddress, device::getPort
+            );
             clientSession = client
                 .connect(device.getUsername(), device.getAddress(), device.getPort())
                 .verify(device.getConnectTimeout())
@@ -43,21 +40,68 @@ public class NetconfSession implements AutoCloseable {
             close();
             throw new NetconfConnectException(
                 format("Unable to connect to device at %s:%d",
-                    device.getAddress(), device.getPort()),
-                e);
+                    device.getAddress(), device.getPort()
+                ), e);
         }
 
+        if (device.getPassword() != null) {
+            loginWithPassword();
+        } else if (device.getPrivateKey() != null) {
+            loginWithPrivateKey();
+        } else {
+            loginWithIdentityFiles();
+        }
+    }
+
+    private void loginWithPassword() throws NetconfAuthenticationException {
         try {
-            log.debug("Logging in to device with username '{}'", device.getUsername());
+            log.debug("Logging in with password to device with username '{}'",
+                device.getUsername()
+            );
             clientSession.addPasswordIdentity(device.getPassword());
-            clientSession.auth().verify(device.getReadTimeout());
+            clientSession.auth().verify(device.getLoginTimeout());
         } catch (final IOException e) {
             close();
             throw new NetconfAuthenticationException(
                 "Unable to login with username " + device.getUsername(),
-                e);
+                e
+            );
         }
-        log.info("Connected to {}@{}:{}",
+        log.info("Connected using password to {}@{}:{}",
+            device::getUsername, device::getAddress, device::getPort);
+    }
+
+    private void loginWithPrivateKey() throws NetconfException {
+        try {
+            log.debug("Logging in with private key to device with username '{}'",
+                device.getUsername()
+            );
+            clientSession.addPublicKeyIdentity(CertUtils.getGetPair(device.getPrivateKey()));
+            clientSession.auth().verify(device.getLoginTimeout());
+        } catch (final IOException e) {
+            close();
+            throw new NetconfAuthenticationException(
+                "Unable to login with username " + device.getUsername(),
+                e
+            );
+        }
+        log.info("Connected using private key to {}@{}:{}",
+            device::getUsername, device::getAddress, device::getPort);
+    }
+
+    private void loginWithIdentityFiles() throws NetconfAuthenticationException {
+        try {
+            log.debug("Logging in with identify files to device with username '{}'",
+                device.getUsername());
+            clientSession.auth().verify(device.getLoginTimeout());
+        } catch (final IOException e) {
+            close();
+            throw new NetconfAuthenticationException(
+                "Unable to login with username " + device.getUsername(),
+                e
+            );
+        }
+        log.info("Connected using password to {}@{}:{}",
             device::getUsername, device::getAddress, device::getPort);
     }
 

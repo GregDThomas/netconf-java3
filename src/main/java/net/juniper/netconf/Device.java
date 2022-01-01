@@ -23,7 +23,6 @@ import net.juniper.netconf.exception.NetconfException;
  *     .hostname("hostname")
  *     .username("username")
  *     .password("password")
- *     .hostKeysFileName("hostKeysFileName")
  *     .build();
  *
  * try(final NetconfSession session = device.openSession()) {
@@ -31,15 +30,27 @@ import net.juniper.netconf.exception.NetconfException;
  * }
  * {@code}
  * </pre>
+ * <h2>Authentication</h2>
+ * There are three ways the client can authenticate to the device;
+ * <ul>
+ *     <li>With a password - see {@link #password}</li>
+ *     <li>With a private key - see {@link #privateKey}</li>
+ *     <li>Using standard SSH identity files, stored in the current users {@code ~/.ssh} folder
+ *     (e.g., {@code id_rsa}, {@code id_ecdsa}). This mechanism will be used if neither a password
+ *     or a private key is supplied.</li>
+ * </ul>
  */
 
 @Value
 @Log4j2
 public class Device {
 
+    // TODO: Add option to verify server RSA keys
+
     /**
      * The DNS or IP address of the device to connect to. Must be specified.
      */
+    @NonNull
     String address;
 
     /**
@@ -48,17 +59,16 @@ public class Device {
     int port;
 
     /**
-     * The username used to log in with. Will be used in conjunction with the password if a private
-     * certificate is not supplied, or the supplied certificate does not work.
+     * The username used to log in with.
      *
      * @see #password
      * @see #privateKey
      */
+    @NonNull
     String username;
 
     /**
-     * The password used to log in with. Will be used in conjunction with the username if a private
-     * certificate is not supplied, or the supplied certificate does not work.
+     * If supplied, the password used to log in with.
      *
      * @see #username
      * @see #privateKey
@@ -71,27 +81,16 @@ public class Device {
     String maskedPassword;
 
     /**
-     * The username, used in conjunction with the private key, to log in with. Used in preference to
-     * the username and password, though if these are supplied they will be used as a backup if the
-     * private key does not work.
-     *
-     * @see #privateKey
-     * @see #username
-     */
-    String privateKeyUsername;
-
-    /**
-     * The private key used to log in with.  If supplied, will be used with the private key username
-     * in preference to the username and password. This should be supplied in PEM format (this
-     * normally starts <code>-----BEGIN RSA PRIVATE KEY-----</code>). Used in preference to the
-     * username and password, though if these are supplied they will be used as a backup if the
-     * private key does not work.
+     * If supplied, the private key used to log in with.  This should be supplied in PEM format
+     * (this normally starts <code>-----BEGIN RSA PRIVATE KEY-----</code>).
      *
      * @see #username
+     * @see #password
      */
     @ToString.Exclude
     String privateKey;
 
+    @Getter(AccessLevel.NONE)
     @ToString.Include(name = "privateKey")
     String maskedPrivateKey;
 
@@ -102,28 +101,25 @@ public class Device {
     Duration connectTimeout;
 
     /**
+     * The maximum amount of time to wait when attempting to log in to the device. Defaults to
+     * the {@link #connectTimeout}
+     */
+    Duration loginTimeout;
+
+    /**
      * The maximum amount of time to wait when reading data the device. Defaults to five seconds.
      */
     Duration readTimeout;
-
-    /**
-     * This is used for test purposes only. Code using this library should not access the
-     * {@link NetconfSessionFactory} directly.
-     */
-    @ToString.Exclude
-    @Getter(AccessLevel.NONE)
-    NetconfSessionFactory netconfSessionFactory;
 
     @Builder
     private Device(
         @NonNull final String address,
         final Integer port,
-        final String username,
+        @NonNull final String username,
         final String password,
-        final String privateKeyUsername,
         final String privateKey,
-        final NetconfSessionFactory netconfSessionFactory,
         final Duration connectTimeout,
+        final Duration loginTimeout,
         final Duration readTimeout
     ) {
         this.address = address;
@@ -131,26 +127,15 @@ public class Device {
         this.username = username;
         this.password = password;
         this.maskedPassword = password == null ? null : "********";
-        this.privateKeyUsername = privateKeyUsername;
         this.privateKey = privateKey;
         this.maskedPrivateKey = privateKey == null ? null : "****************";
-        this.netconfSessionFactory = ofNullable(netconfSessionFactory)
-            .orElseGet(NetconfSessionFactory::new);
         this.connectTimeout = ofNullable(connectTimeout).orElseGet(() -> Duration.ofSeconds(5));
+        this.loginTimeout = ofNullable(loginTimeout).orElse(this.connectTimeout);
         this.readTimeout = ofNullable(readTimeout).orElseGet(() -> Duration.ofSeconds(5));
 
-        if (username == null && privateKeyUsername == null) {
-            throw new IllegalArgumentException("Credentials in the form of a username/password"
-                + " and/or private key username and certificate must be supplied"
-            );
-        }
-        if ((username == null && password != null) || (username != null && password == null)) {
-            throw new IllegalArgumentException("A username must be supplied with a password");
-        }
-        if ((privateKeyUsername == null && privateKey != null)
-            || (privateKeyUsername != null && privateKey == null)) {
+        if (password != null && privateKey != null) {
             throw new IllegalArgumentException(
-                "A privateKeyUsername must be supplied with a privateKey"
+                "A privateKey cannot be supplied with a password"
             );
         }
         log.info("New device created: {}", this);
@@ -163,19 +148,9 @@ public class Device {
      * @throws NetconfException if a session could not be created.
      */
     public NetconfSession openSession() throws NetconfException {
-        if (privateKey != null) {
-            try {
-                return netconfSessionFactory.createSessionUsingCertificate(this);
-            } catch (final NetconfException e) {
-                if (username == null) {
-                    throw e;
-                } else {
-                    log.warn("Unable to connect to {}:{} using certificate,"
-                        + " trying username and password", address, port, e);
-                }
-            }
-        }
-        return netconfSessionFactory.createSessionUsingPassword(this);
+        final NetconfSession session = new NetconfSession(this);
+        session.connect();
+        return session;
     }
 
 }

@@ -119,13 +119,14 @@ dependencies {
     implementation "org.apache.logging.log4j:log4j-api:${log4jVersion}"
     implementation 'com.google.guava:guava:31.0.1-jre'
     implementation 'org.apache.sshd:sshd-core:2.8.0'
-    implementation "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}"
 
     // Use JUnit Jupiter for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
+    testImplementation "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}"
     testImplementation 'org.assertj:assertj-core:3.21.0'
     testImplementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
     testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
+    testImplementation 'org.xmlunit:xmlunit-assertj:2.8.4'
 
     // Lombok
     compileOnly "org.projectlombok:lombok:${lombokVersion}"

@@ -15,7 +15,7 @@
             <AppenderRef ref="Console"/>
             <AppenderRef ref="File"/>
         </Root>
-        <Logger name="org.apache.sshd" level="warn" additivity="false">
+        <Logger name="org.apache.sshd" level="info" additivity="false">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="File"/>
         </Logger>

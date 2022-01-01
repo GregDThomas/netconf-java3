@@ -22,7 +22,9 @@ import org.w3c.dom.Element;
 @NonFinal
 public abstract class AbstractNetconfElement {
 
-    static final String URN_XML_NS_NETCONF_BASE_1_0 = "urn:ietf:params:xml:ns:netconf:base:1.0";
+    public static final String DEVICE_PROMPT = "]]>]]>";
+    public static final String URN_XML_NS_NETCONF_BASE_1_0 = "urn:ietf:params:xml:ns:netconf:base:1.0";
+    public static final String URN_IETF_PARAMS_NETCONF_BASE_1_0 = "urn:ietf:params:netconf:base:1.0";
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

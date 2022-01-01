@@ -46,6 +46,7 @@ import net.juniper.netconf.exception.NetconfException;
 public class Device {
 
     // TODO: Add option to verify server RSA keys
+    // TODO: Add option to set session heartbeat
 
     /**
      * The DNS or IP address of the device to connect to. Must be specified.

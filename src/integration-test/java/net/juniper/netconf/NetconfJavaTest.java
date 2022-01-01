@@ -1,6 +1,7 @@
 package net.juniper.netconf;
 
 import static java.util.Optional.ofNullable;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -56,6 +57,7 @@ class NetconfJavaTest {
 
         try (final NetconfSession session = device.openSession()) {
             log.info("Connected!");
+            assertThat(session.isConnected()).isTrue();
         }
 
     }

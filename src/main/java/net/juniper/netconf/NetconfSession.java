@@ -53,22 +53,20 @@ public class NetconfSession implements AutoCloseable {
     }
 
     private void sendHello() throws NetconfException {
-        final Hello clientHello = Hello.builder()
-            .capabilities(Arrays.asList(
-                Hello.URN_IETF_PARAMS_NETCONF_BASE_1_0,
+        final Hello clientHello = Hello.builder().capabilities(
+            Arrays.asList(Hello.URN_IETF_PARAMS_NETCONF_BASE_1_0,
                 Hello.URN_IETF_PARAMS_NETCONF_BASE_1_0 + "#candidate",
                 Hello.URN_IETF_PARAMS_NETCONF_BASE_1_0 + "#confirmed-commit",
                 Hello.URN_IETF_PARAMS_NETCONF_BASE_1_0 + "#validate",
-                Hello.URN_IETF_PARAMS_NETCONF_BASE_1_0 + "#url?protocol=http,ftp,file"
-            ))
-            .build();
+                Hello.URN_IETF_PARAMS_NETCONF_BASE_1_0 + "#url?protocol=http,ftp,file")).build();
         final String serverHello = netconfSshSession.sendMessage(clientHello.getXml());
         try {
             this.serverHello = Hello.from(serverHello);
         } catch (final ParserConfigurationException
             | IOException
             | SAXException
-            | XPathExpressionException e) {
+            | XPathExpressionException e
+        ) {
             log.warn("Unexpected response received from server: {}", serverHello, e);
             throw new NetconfException("Unable to parse response from server", e);
         }

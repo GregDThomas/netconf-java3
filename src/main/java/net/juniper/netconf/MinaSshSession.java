@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import lombok.extern.log4j.Log4j2;
-import net.juniper.netconf.element.Hello;
+import net.juniper.netconf.element.AbstractNetconfElement;
 import net.juniper.netconf.exception.NetconfAuthenticationException;
 import net.juniper.netconf.exception.NetconfConnectException;
 import net.juniper.netconf.exception.NetconfException;
@@ -149,10 +149,25 @@ public class MinaSshSession implements NetconfSshSession {
         try {
             responseStream.reset();
             log.debug("Sending:\n{}", message);
-            requestStream.write((message + Hello.DEVICE_PROMPT).getBytes(StandardCharsets.UTF_8));
+            requestStream.write(
+                (message + AbstractNetconfElement.MESSAGE_SEPARATOR)
+                    .getBytes(StandardCharsets.UTF_8)
+            );
             requestStream.flush();
-            responseStream.waitForEnding(Hello.DEVICE_PROMPT, device.getReadTimeout());
-            final String response = responseStream.toString(StandardCharsets.UTF_8.name());
+            responseStream.waitForEnding(
+                AbstractNetconfElement.MESSAGE_SEPARATOR,
+                device.getReadTimeout()
+            );
+            final String responseWithMessageSeparator =
+                responseStream.toString(StandardCharsets.UTF_8.name());
+            final String response = responseWithMessageSeparator
+                .trim()
+                .substring(
+                    0,
+                    responseWithMessageSeparator.length()
+                        - AbstractNetconfElement.MESSAGE_SEPARATOR.length()
+                        - 1
+                );
             log.debug("Received:\n{}", response);
             return response;
         } catch (final IOException e) {

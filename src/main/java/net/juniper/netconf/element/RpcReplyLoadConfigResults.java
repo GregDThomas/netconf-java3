@@ -1,5 +1,6 @@
 package net.juniper.netconf.element;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.List;
@@ -29,6 +30,7 @@ import org.xml.sax.SAXException;
 @NonFinal
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
+@SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "There is little alternative")
 public class RpcReplyLoadConfigResults extends RpcReply {
 
     static final String XPATH_RPC_REPLY_LOAD_CONFIG_RESULT

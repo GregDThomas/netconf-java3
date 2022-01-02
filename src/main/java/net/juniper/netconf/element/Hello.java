@@ -1,7 +1,9 @@
 package net.juniper.netconf.element;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Collections;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
@@ -28,6 +30,7 @@ import org.xml.sax.SAXException;
 @Value
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
+@SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "There is little alternative")
 public class Hello extends AbstractNetconfElement {
 
     private static final String XPATH_HELLO = getXpathFor("hello");
@@ -41,6 +44,10 @@ public class Hello extends AbstractNetconfElement {
     String sessionId;
 
     @Singular("capability")
+    @SuppressFBWarnings(
+        value = "EI_EXPOSE_REP",
+        justification = "False positive - list is immutable"
+    )
     List<String> capabilities;
 
     public boolean hasCapability(final String capability) {
@@ -93,7 +100,7 @@ public class Hello extends AbstractNetconfElement {
     ) {
         super(getDocument(originalDocument, namespacePrefix, sessionId, capabilities));
         this.sessionId = sessionId;
-        this.capabilities = capabilities;
+        this.capabilities = Collections.unmodifiableList(capabilities);
     }
 
     private static Document getDocument(

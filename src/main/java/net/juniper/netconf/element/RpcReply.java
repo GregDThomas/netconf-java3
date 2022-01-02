@@ -2,9 +2,11 @@ package net.juniper.netconf.element;
 
 import static java.util.Optional.ofNullable;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
@@ -32,6 +34,7 @@ import org.xml.sax.SAXException;
 @NonFinal
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
+@SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "There is little alternative")
 public class RpcReply extends AbstractNetconfElement {
 
     protected static final String XPATH_RPC_REPLY
@@ -67,6 +70,10 @@ public class RpcReply extends AbstractNetconfElement {
 
     String messageId;
     boolean ok;
+    @SuppressFBWarnings(
+        value = "EI_EXPOSE_REP",
+        justification = "False positive - list is immutable"
+    )
     List<RpcError> errors;
 
     /**
@@ -261,7 +268,7 @@ public class RpcReply extends AbstractNetconfElement {
         super(getDocument(originalDocument, namespacePrefix, messageId, ok, errors));
         this.messageId = messageId;
         this.ok = ok;
-        this.errors = errors;
+        this.errors = Collections.unmodifiableList(errors);
     }
 
     private static Document getDocument(

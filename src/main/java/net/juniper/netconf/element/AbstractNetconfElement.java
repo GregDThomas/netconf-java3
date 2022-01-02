@@ -2,6 +2,7 @@ package net.juniper.netconf.element;
 
 import static java.lang.String.format;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.StringWriter;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -33,6 +34,7 @@ public abstract class AbstractNetconfElement {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "There is little alternative")
     Document document;
 
     @ToString.Exclude

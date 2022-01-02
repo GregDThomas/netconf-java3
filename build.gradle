@@ -130,6 +130,7 @@ dependencies {
 
     // Lombok
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    compileOnly 'com.google.code.findbugs:annotations:3.0.1'
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
     testCompileOnly "org.projectlombok:lombok:${lombokVersion}"

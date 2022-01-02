@@ -3,6 +3,7 @@ package net.juniper.netconf;
 import static java.util.Optional.ofNullable;
 
 import java.time.Duration;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -112,6 +113,12 @@ public class Device {
      */
     Duration readTimeout;
 
+    /**
+     * The class used to connect an SSH session to the device. Defaults to {@link MinaSshSession}
+     * if not supplied.
+     */
+    Class<? extends NetconfSshSession> sshImplementation;
+
     @Builder
     private Device(
         @NonNull final String address,
@@ -121,7 +128,8 @@ public class Device {
         final String privateKey,
         final Duration connectTimeout,
         final Duration loginTimeout,
-        final Duration readTimeout
+        final Duration readTimeout,
+        final Class<? extends NetconfSshSession> sshImplementation
     ) {
         this.address = address;
         this.port = ofNullable(port).orElse(830);
@@ -133,6 +141,9 @@ public class Device {
         this.connectTimeout = ofNullable(connectTimeout).orElseGet(() -> Duration.ofSeconds(5));
         this.loginTimeout = ofNullable(loginTimeout).orElse(this.connectTimeout);
         this.readTimeout = ofNullable(readTimeout).orElseGet(() -> Duration.ofSeconds(5));
+        this.sshImplementation =
+            Optional.<Class<? extends NetconfSshSession>>ofNullable(sshImplementation)
+                .orElse(MinaSshSession.class);
 
         if (password != null && privateKey != null) {
             throw new IllegalArgumentException(

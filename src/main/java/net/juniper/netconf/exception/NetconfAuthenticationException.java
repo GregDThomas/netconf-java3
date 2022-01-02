@@ -1,7 +1,7 @@
 package net.juniper.netconf.exception;
 
 /**
- * This exception is raised if there is an error communicating with a device.
+ * This exception is raised if the device rejects the supplied credentials.
  */
 public class NetconfAuthenticationException extends NetconfException {
 

@@ -5,70 +5,71 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.xmlunit.assertj.XmlAssert;
 
-public class RpcReplyLoadConfigResultsTest {
+class RpcReplyLoadConfigResultsTest {
 
     @SuppressWarnings("HttpUrlsUsage")
     private static final String LOAD_CONFIG_RESULTS_OK_NO_NAMESPACE = ""
-        + "<rpc-reply xmlns=\"urn:ietf:params:xml:ns:netconf:base:1.0\"" +
-        "             xmlns:junos=\"http://xml.juniper.net/junos/20.4R0/junos\"" +
-        "             message-id=\"3\">\n" +
-        "    <load-configuration-results action=\"set\">\n" +
-        "        <ok/>\n" +
-        "    </load-configuration-results>\n" +
-        "</rpc-reply>";
+        + "<rpc-reply xmlns=\"urn:ietf:params:xml:ns:netconf:base:1.0\""
+        + "             xmlns:junos=\"http://xml.juniper.net/junos/20.4R0/junos\""
+        + "             message-id=\"3\">\n"
+        + "    <load-configuration-results action=\"set\">\n"
+        + "        <ok/>\n"
+        + "    </load-configuration-results>\n"
+        + "</rpc-reply>";
 
     @SuppressWarnings("HttpUrlsUsage")
     private static final String LOAD_CONFIG_RESULTS_OK_WITH_NAMESPACE = ""
-        + "<nc:rpc-reply xmlns:nc=\"urn:ietf:params:xml:ns:netconf:base:1.0\"" +
-        "                   xmlns:junos=\"http://xml.juniper.net/junos/20.4R0/junos\"" +
-        "                   message-id=\"4\">\n" +
-        "    <load-configuration-results action=\"set\">\n" +
-        "        <nc:ok/>\n" +
-        "    </load-configuration-results>\n" +
-        "</nc:rpc-reply>";
+        + "<nc:rpc-reply xmlns:nc=\"urn:ietf:params:xml:ns:netconf:base:1.0\""
+        + "                   xmlns:junos=\"http://xml.juniper.net/junos/20.4R0/junos\""
+        + "                   message-id=\"4\">\n"
+        + "    <load-configuration-results action=\"set\">\n"
+        + "        <nc:ok/>\n"
+        + "    </load-configuration-results>\n"
+        + "</nc:rpc-reply>";
 
     @SuppressWarnings("HttpUrlsUsage")
     private static final String LOAD_CONFIG_RESULTS_ERROR_NO_NAMESPACE = ""
-        + "<rpc-reply xmlns=\"urn:ietf:params:xml:ns:netconf:base:1.0\"" +
-        "               xmlns:junos=\"http://xml.juniper.net/junos/20.4R0/junos\"\n" +
-        "               message-id=\"5\">\n" +
-        "    <load-configuration-results action=\"set\">\n" +
-        "        <rpc-error>\n" +
-        "            <error-type>protocol</error-type>\n" +
-        "            <error-tag>operation-failed</error-tag>\n" +
-        "            <error-severity>error</error-severity>\n" +
-        "            <error-message>syntax error</error-message>\n" +
-        "            <error-info>\n" +
-        "                <bad-element>foobar</bad-element>\n" +
-        "            </error-info>\n" +
-        "        </rpc-error>\n" +
-        "        <ok/>\n" +
-        "    </load-configuration-results>\n" +
-        "</rpc-reply>\n";
+        + "<rpc-reply xmlns=\"urn:ietf:params:xml:ns:netconf:base:1.0\""
+        + "               xmlns:junos=\"http://xml.juniper.net/junos/20.4R0/junos\"\n"
+        + "               message-id=\"5\">\n"
+        + "    <load-configuration-results action=\"set\">\n"
+        + "        <rpc-error>\n"
+        + "            <error-type>protocol</error-type>\n"
+        + "            <error-tag>operation-failed</error-tag>\n"
+        + "            <error-severity>error</error-severity>\n"
+        + "            <error-message>syntax error</error-message>\n"
+        + "            <error-info>\n"
+        + "                <bad-element>foobar</bad-element>\n"
+        + "            </error-info>\n"
+        + "        </rpc-error>\n"
+        + "        <ok/>\n"
+        + "    </load-configuration-results>\n"
+        + "</rpc-reply>\n";
 
     @SuppressWarnings("HttpUrlsUsage")
     private static final String LOAD_CONFIG_RESULTS_ERROR_WITH_NAMESPACE = ""
-        + "<nc:rpc-reply xmlns:nc=\"urn:ietf:params:xml:ns:netconf:base:1.0\"" +
-        "                   xmlns:junos=\"http://xml.juniper.net/junos/20.4R0/junos\"\n" +
-        "                   message-id=\"6\">\n" +
-        "    <load-configuration-results action=\"set\">\n" +
-        "        <nc:rpc-error>\n" +
-        "            <nc:error-type>protocol</nc:error-type>\n" +
-        "            <nc:error-tag>operation-failed</nc:error-tag>\n" +
-        "            <nc:error-severity>error</nc:error-severity>\n" +
-        "            <nc:error-message>syntax error</nc:error-message>\n" +
-        "            <nc:error-info>\n" +
-        "                <nc:bad-element>foobar</nc:bad-element>\n" +
-        "            </nc:error-info>\n" +
-        "        </nc:rpc-error>\n" +
-        "        <nc:ok/>\n" +
-        "    </load-configuration-results>\n" +
-        "</nc:rpc-reply>\n";
+        + "<nc:rpc-reply xmlns:nc=\"urn:ietf:params:xml:ns:netconf:base:1.0\""
+        + "                   xmlns:junos=\"http://xml.juniper.net/junos/20.4R0/junos\"\n"
+        + "                   message-id=\"6\">\n"
+        + "    <load-configuration-results action=\"set\">\n"
+        + "        <nc:rpc-error>\n"
+        + "            <nc:error-type>protocol</nc:error-type>\n"
+        + "            <nc:error-tag>operation-failed</nc:error-tag>\n"
+        + "            <nc:error-severity>error</nc:error-severity>\n"
+        + "            <nc:error-message>syntax error</nc:error-message>\n"
+        + "            <nc:error-info>\n"
+        + "                <nc:bad-element>foobar</nc:bad-element>\n"
+        + "            </nc:error-info>\n"
+        + "        </nc:rpc-error>\n"
+        + "        <nc:ok/>\n"
+        + "    </load-configuration-results>\n"
+        + "</nc:rpc-reply>\n";
 
     @Test
     public void willParseAnOkResponseWithNoNamespacePrefix() throws Exception {
 
-        final RpcReplyLoadConfigResults rpcReply = RpcReply.from(LOAD_CONFIG_RESULTS_OK_NO_NAMESPACE);
+        final RpcReplyLoadConfigResults rpcReply =
+            RpcReply.from(LOAD_CONFIG_RESULTS_OK_NO_NAMESPACE);
 
         assertThat(rpcReply.getMessageId())
             .isEqualTo("3");
@@ -90,7 +91,8 @@ public class RpcReplyLoadConfigResultsTest {
     @Test
     public void willParseAnOkResponseWithNamespacePrefix() throws Exception {
 
-        final RpcReplyLoadConfigResults rpcReply = RpcReply.from(LOAD_CONFIG_RESULTS_OK_WITH_NAMESPACE);
+        final RpcReplyLoadConfigResults rpcReply =
+            RpcReply.from(LOAD_CONFIG_RESULTS_OK_WITH_NAMESPACE);
 
         assertThat(rpcReply.getMessageId())
             .isEqualTo("4");
@@ -112,7 +114,8 @@ public class RpcReplyLoadConfigResultsTest {
     @Test
     public void willParseAnErrorResponseWithoutNamespacePrefix() throws Exception {
 
-        final RpcReplyLoadConfigResults rpcReply = RpcReply.from(LOAD_CONFIG_RESULTS_ERROR_NO_NAMESPACE);
+        final RpcReplyLoadConfigResults rpcReply =
+            RpcReply.from(LOAD_CONFIG_RESULTS_ERROR_NO_NAMESPACE);
 
         assertThat(rpcReply.getMessageId())
             .isEqualTo("5");
@@ -141,7 +144,8 @@ public class RpcReplyLoadConfigResultsTest {
     @Test
     public void willParseAnErrorResponseWithNamespacePrefix() throws Exception {
 
-        final RpcReplyLoadConfigResults rpcReply = RpcReply.from(LOAD_CONFIG_RESULTS_ERROR_WITH_NAMESPACE);
+        final RpcReplyLoadConfigResults rpcReply =
+            RpcReply.from(LOAD_CONFIG_RESULTS_ERROR_WITH_NAMESPACE);
 
         assertThat(rpcReply.getMessageId())
             .isEqualTo("6");

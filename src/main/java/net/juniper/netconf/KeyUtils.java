@@ -10,13 +10,13 @@ import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
-import net.juniper.netconf.exception.NetconfCertificateException;
+import net.juniper.netconf.exception.NetconfKeyException;
 
 /**
  * Utility class to deal with parsing of keys.
  * <br>Reading of a private key based on https://stackoverflow.com/a/55339208/359394
  */
-public final class CertUtils {
+public final class KeyUtils {
 
     private static final String PKCS_1_PEM_HEADER = "-----BEGIN RSA PRIVATE KEY-----";
     private static final String PKCS_1_PEM_FOOTER = "-----END RSA PRIVATE KEY-----";
@@ -29,10 +29,10 @@ public final class CertUtils {
      *
      * @param pkcsEncodedPrivateKey the Base 64 encoded private key.
      * @return A KeyPair from the encoded private key.
-     * @throws NetconfCertificateException if the supplied key could not be decoded.
+     * @throws NetconfKeyException if the supplied key could not be decoded.
      */
     public static KeyPair getGetPair(final String pkcsEncodedPrivateKey)
-        throws NetconfCertificateException {
+        throws NetconfKeyException {
         try {
             final PrivateKey privateKey = decodePrivateKey(pkcsEncodedPrivateKey);
 
@@ -46,7 +46,7 @@ public final class CertUtils {
             final PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
             return new KeyPair(publicKey, privateKey);
         } catch (final GeneralSecurityException e) {
-            throw new NetconfCertificateException("Unable to decode supplied certificate", e);
+            throw new NetconfKeyException("Unable to decode supplied certificate", e);
         }
     }
 

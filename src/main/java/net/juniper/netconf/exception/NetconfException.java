@@ -21,8 +21,12 @@ public class NetconfException extends Exception {
         super(cause);
     }
 
-    public NetconfException(final String message, final Throwable cause,
-                               final boolean enableSuppression, final boolean writableStackTrace) {
+    public NetconfException(
+        final String message,
+        final Throwable cause,
+        final boolean enableSuppression,
+        final boolean writableStackTrace
+    ) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

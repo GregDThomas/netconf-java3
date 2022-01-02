@@ -22,13 +22,28 @@ public class RpcError {
     String errorMessageLanguage;
     RpcErrorInfo errorInfo;
 
+    /**
+     * The type of RPC error.
+     */
     @Getter
     @RequiredArgsConstructor
     public enum ErrorType {
-        TRANSPORT("transport"), RPC("rpc"), PROTOCOL("protocol"), APPLICATION("application");
+        TRANSPORT("transport"),
+        RPC("rpc"),
+        PROTOCOL("protocol"),
+        APPLICATION("application");
 
+        /**
+         * The text content representing this error type.
+         */
         private final String textContent;
 
+        /**
+         * Determine the error type from the text.
+         *
+         * @param textContent the text.
+         * @return the error type - or null if the textContent is not recognised.
+         */
         public static ErrorType from(final String textContent) {
             for (final ErrorType errorType : ErrorType.values()) {
                 if (errorType.textContent.equals(textContent)) {
@@ -39,6 +54,9 @@ public class RpcError {
         }
     }
 
+    /**
+     * The tag associated with the RPC error.
+     */
     @Getter
     @RequiredArgsConstructor
     public enum ErrorTag {
@@ -61,8 +79,17 @@ public class RpcError {
         PARTIAL_OPERATION("partial-operation"),
         MALFORMED_MESSAGE("malformed-message");
 
+        /**
+         * The text content representing this error tag.
+         */
         private final String textContent;
 
+        /**
+         * Determine the error tag from the text.
+         *
+         * @param textContent the text.
+         * @return the error tag - or null if the textContent is not recognised.
+         */
         public static ErrorTag from(final String textContent) {
             for (final ErrorTag errorTag : ErrorTag.values()) {
                 if (errorTag.textContent.equals(textContent)) {
@@ -73,13 +100,25 @@ public class RpcError {
         }
     }
 
+    /**
+     * The severity of the RPC error.
+     */
     @Getter
     @RequiredArgsConstructor
     public enum ErrorSeverity {
         ERROR("error"), WARNING("warning");
 
+        /**
+         * The text content representing the error severity.
+         */
         private final String textContent;
 
+        /**
+         * Determine the error tag from the text.
+         *
+         * @param textContent the text.
+         * @return the error severity - or null if the textContent is not recognised.
+         */
         public static ErrorSeverity from(final String textContent) {
             for (final ErrorSeverity errorSeverity : ErrorSeverity.values()) {
                 if (errorSeverity.textContent.equals(textContent)) {

@@ -19,6 +19,8 @@
    Changes for netconf-java:
     o module name="Indentation" values changed from 2->4
     o Added module name="UnusedImports"
+    o Added module name="SuppressWarningsFilter"
+    o Added module name="SuppressWarningsHolder"
  -->
 
 <module name = "Checker">
@@ -27,6 +29,8 @@
     <property name="severity" value="warning"/>
 
     <property name="fileExtensions" value="java, properties, xml"/>
+
+    <module name="SuppressWarningsFilter"/>
     <!-- Excludes all 'module-info.java' files              -->
     <!-- See https://checkstyle.org/config_filefilters.html -->
     <module name="BeforeExecutionExclusionFileFilter">
@@ -53,6 +57,7 @@
 
     <module name="TreeWalker">
         <module name="UnusedImports"/>
+        <module name="SuppressWarningsHolder" />
         <module name="OuterTypeFilename"/>
         <module name="IllegalTokenText">
             <property name="tokens" value="STRING_LITERAL, CHAR_LITERAL"/>

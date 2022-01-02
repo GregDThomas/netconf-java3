@@ -1,27 +1,27 @@
 package net.juniper.netconf.exception;
 
 /**
- * This exception is raised if there is an error connecting to a device.
+ * This exception is raised if the supplied private key cannot be decoded.
  */
-public class NetconfConnectException extends NetconfException {
+public class NetconfKeyException extends NetconfException {
 
-    public NetconfConnectException() {
+    public NetconfKeyException() {
         super();
     }
 
-    public NetconfConnectException(final String message) {
+    public NetconfKeyException(final String message) {
         super(message);
     }
 
-    public NetconfConnectException(final String message, final Throwable cause) {
+    public NetconfKeyException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public NetconfConnectException(final Throwable cause) {
+    public NetconfKeyException(final Throwable cause) {
         super(cause);
     }
 
-    public NetconfConnectException(
+    public NetconfKeyException(
         final String message,
         final Throwable cause,
         final boolean enableSuppression,

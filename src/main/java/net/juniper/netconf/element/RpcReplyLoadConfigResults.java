@@ -20,6 +20,10 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+/**
+ * Class to represent a NETCONF load-configuration-results rpc-reply element -
+ * https://www.juniper.net/documentation/us/en/software/junos/netconf/junos-xml-protocol/topics/ref/tag/junos-xml-protocol-load-configuration-results.html
+ */
 @Slf4j
 @Value
 @NonFinal
@@ -27,12 +31,25 @@ import org.xml.sax.SAXException;
 @EqualsAndHashCode(callSuper = true)
 public class RpcReplyLoadConfigResults extends RpcReply {
 
-    static final String XPATH_RPC_REPLY_LOAD_CONFIG_RESULT = RpcReply.XPATH_RPC_REPLY + "/*[local-name()='load-configuration-results']";
-    private static final String XPATH_RPC_REPLY_LOAD_CONFIG_RESULT_OK = XPATH_RPC_REPLY_LOAD_CONFIG_RESULT + getXpathFor("ok");
-    private static final String XPATH_RPC_REPLY_LOAD_CONFIG_RESULT_ERROR = XPATH_RPC_REPLY_LOAD_CONFIG_RESULT + getXpathFor("rpc-error");
+    static final String XPATH_RPC_REPLY_LOAD_CONFIG_RESULT
+        = RpcReply.XPATH_RPC_REPLY + "/*[local-name()='load-configuration-results']";
+    private static final String XPATH_RPC_REPLY_LOAD_CONFIG_RESULT_OK
+        = XPATH_RPC_REPLY_LOAD_CONFIG_RESULT + getXpathFor("ok");
+    private static final String XPATH_RPC_REPLY_LOAD_CONFIG_RESULT_ERROR
+        = XPATH_RPC_REPLY_LOAD_CONFIG_RESULT + getXpathFor("rpc-error");
 
     String action;
 
+    /**
+     * Generates an LoadConfigResults RpcReply object from XML.
+     *
+     * @param xml The XML representing the reply.
+     * @return an RpcReplyLoadConfigResults object.
+     * @throws ParserConfigurationException If the XML parser cannot be created
+     * @throws IOException                  If the XML cannot be read
+     * @throws SAXException                 If the XML cannot be parsed
+     * @throws XPathExpressionException     If there is a problem in the parsing expressions
+     */
     public static RpcReplyLoadConfigResults from(final String xml)
         throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
 
@@ -40,10 +57,26 @@ public class RpcReplyLoadConfigResults extends RpcReply {
             .parse(new InputSource(new StringReader(xml)));
         final XPath xPath = XPathFactory.newInstance().newXPath();
 
-        final Element rpcReplyElement = (Element) xPath.evaluate(XPATH_RPC_REPLY, document, XPathConstants.NODE);
-        final Element loadConfigResultsElement = (Element) xPath.evaluate(RpcReplyLoadConfigResults.XPATH_RPC_REPLY_LOAD_CONFIG_RESULT, document, XPathConstants.NODE);
-        final Element rpcReplyOkElement = (Element) xPath.evaluate(XPATH_RPC_REPLY_LOAD_CONFIG_RESULT_OK, document, XPathConstants.NODE);
-        final List<RpcError> errorList = getRpcErrors(document, xPath, XPATH_RPC_REPLY_LOAD_CONFIG_RESULT_ERROR);
+        final Element rpcReplyElement = (Element) xPath.evaluate(
+            XPATH_RPC_REPLY,
+            document,
+            XPathConstants.NODE
+        );
+        final Element loadConfigResultsElement = (Element) xPath.evaluate(
+            RpcReplyLoadConfigResults.XPATH_RPC_REPLY_LOAD_CONFIG_RESULT,
+            document,
+            XPathConstants.NODE
+        );
+        final Element rpcReplyOkElement = (Element) xPath.evaluate(
+            XPATH_RPC_REPLY_LOAD_CONFIG_RESULT_OK,
+            document,
+            XPathConstants.NODE
+        );
+        final List<RpcError> errorList = getRpcErrors(
+            document,
+            xPath,
+            XPATH_RPC_REPLY_LOAD_CONFIG_RESULT_ERROR
+        );
 
         return RpcReplyLoadConfigResults.loadConfigResultsBuilder()
             .messageId(getAttribute(rpcReplyElement, "message-id"))
@@ -61,7 +94,8 @@ public class RpcReplyLoadConfigResults extends RpcReply {
         final String messageId,
         final String action,
         final boolean ok,
-        @Singular("error") final List<RpcError> errors) {
+        @Singular("error") final List<RpcError> errors
+    ) {
         super(getDocument(originalDocument, namespacePrefix, messageId, action, ok, errors),
             namespacePrefix, messageId, ok, errors);
         this.action = action;
@@ -73,7 +107,8 @@ public class RpcReplyLoadConfigResults extends RpcReply {
         final String messageId,
         final String action,
         final boolean ok,
-        final List<RpcError> errors) {
+        final List<RpcError> errors
+    ) {
         if (originalDocument != null) {
             return originalDocument;
         } else {
@@ -86,18 +121,26 @@ public class RpcReplyLoadConfigResults extends RpcReply {
         final String messageId,
         final String action,
         final boolean ok,
-        final List<RpcError> errors) {
+        final List<RpcError> errors
+    ) {
         final Document createdDocument = createBlankDocument();
-        final Element rpcReplyElement = createdDocument.createElementNS(URN_XML_NS_NETCONF_BASE_1_0, "rpc-reply");
+        final Element rpcReplyElement = createdDocument.createElementNS(
+            URN_XML_NS_NETCONF_BASE_1_0,
+            "rpc-reply"
+        );
         rpcReplyElement.setPrefix(namespacePrefix);
         rpcReplyElement.setAttribute("message-id", messageId);
         createdDocument.appendChild(rpcReplyElement);
-        final Element loadConfigResultsElement = createdDocument.createElement("load-configuration-results");
+        final Element loadConfigResultsElement
+            = createdDocument.createElement("load-configuration-results");
         loadConfigResultsElement.setAttribute("action", action);
         rpcReplyElement.appendChild(loadConfigResultsElement);
         appendErrors(namespacePrefix, errors, createdDocument, loadConfigResultsElement);
         if (ok) {
-            final Element okElement = createdDocument.createElementNS(URN_XML_NS_NETCONF_BASE_1_0, "ok");
+            final Element okElement = createdDocument.createElementNS(
+                URN_XML_NS_NETCONF_BASE_1_0,
+                "ok"
+            );
             okElement.setPrefix(namespacePrefix);
             loadConfigResultsElement.appendChild(okElement);
         }

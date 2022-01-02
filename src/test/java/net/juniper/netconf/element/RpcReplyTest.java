@@ -6,41 +6,41 @@ import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.xmlunit.assertj.XmlAssert;
 
-public class RpcReplyTest {
+class RpcReplyTest {
 
-    private static final String RPC_REPLY_WITHOUT_NAMESPACE = "" +
-        "<rpc-reply xmlns=\"urn:ietf:params:xml:ns:netconf:base:1.0\"\n" +
-        "   message-id=\"3\"\n" +
-        "/>";
-    private static final String RPC_REPLY_WITH_NAMESPACE = "" +
-        "<nc:rpc-reply xmlns:nc=\"urn:ietf:params:xml:ns:netconf:base:1.0\"\n" +
-        "   message-id=\"4\"\n" +
-        "/>";
-    private static final String RPC_REPLY_WITH_OK = "" +
-        "<nc:rpc-reply xmlns:nc=\"urn:ietf:params:xml:ns:netconf:base:1.0\"\n" +
-        "    message-id=\"5\">\n" +
-        "    <nc:ok/>\n" +
-        "</nc:rpc-reply>";
+    private static final String RPC_REPLY_WITHOUT_NAMESPACE = ""
+        + "<rpc-reply xmlns=\"urn:ietf:params:xml:ns:netconf:base:1.0\"\n"
+        + "   message-id=\"3\"\n"
+        + "/>";
+    private static final String RPC_REPLY_WITH_NAMESPACE = ""
+        + "<nc:rpc-reply xmlns:nc=\"urn:ietf:params:xml:ns:netconf:base:1.0\"\n"
+        + "   message-id=\"4\"\n"
+        + "/>";
+    private static final String RPC_REPLY_WITH_OK = ""
+        + "<nc:rpc-reply xmlns:nc=\"urn:ietf:params:xml:ns:netconf:base:1.0\"\n"
+        + "    message-id=\"5\">\n"
+        + "    <nc:ok/>\n"
+        + "</nc:rpc-reply>";
     // Example from https://datatracker.ietf.org/doc/html/rfc6241#section-4.3
-    @SuppressWarnings("HttpUrlsUsage")
-    private static final String RPC_REPLY_WITH_ERRORS = "" +
-        "<rpc-reply message-id=\"101\"\n" +
-        "           xmlns=\"urn:ietf:params:xml:ns:netconf:base:1.0\">\n" +
-        "    <rpc-error>\n" +
-        "        <error-type>application</error-type>\n" +
-        "        <error-tag>invalid-value</error-tag>\n" +
-        "        <error-severity>error</error-severity>\n" +
-        "        <error-path xmlns:t=\"http://example.com/schema/1.2/config\">/t:top/t:interface[t:name=\"Ethernet0/0\"]/t:mtu</error-path>\n" +
-        "        <error-message xml:lang=\"en\">MTU value 25000 is not within range 256..9192</error-message>\n" +
-        "    </rpc-error>\n" +
-        "    <rpc-error>\n" +
-        "        <error-type>application</error-type>\n" +
-        "        <error-tag>invalid-value</error-tag>\n" +
-        "        <error-severity>error</error-severity>\n" +
-        "        <error-path xmlns:t=\"http://example.com/schema/1.2/config\">/t:top/t:interface[t:name=\"Ethernet1/0\"]/t:address/t:name</error-path>\n" +
-        "        <error-message>Invalid IP address for interface Ethernet1/0</error-message>\n" +
-        "    </rpc-error>\n" +
-        "</rpc-reply>";
+    @SuppressWarnings({"HttpUrlsUsage", "checkstyle:LineLength"})
+    private static final String RPC_REPLY_WITH_ERRORS = ""
+        + "<rpc-reply message-id=\"101\"\n"
+        + "           xmlns=\"urn:ietf:params:xml:ns:netconf:base:1.0\">\n"
+        + "    <rpc-error>\n"
+        + "        <error-type>application</error-type>\n"
+        + "        <error-tag>invalid-value</error-tag>\n"
+        + "        <error-severity>error</error-severity>\n"
+        + "        <error-path xmlns:t=\"http://example.com/schema/1.2/config\">/t:top/t:interface[t:name=\"Ethernet0/0\"]/t:mtu</error-path>\n"
+        + "        <error-message xml:lang=\"en\">MTU value 25000 is not within range 256..9192</error-message>\n"
+        + "    </rpc-error>\n"
+        + "    <rpc-error>\n"
+        + "        <error-type>application</error-type>\n"
+        + "        <error-tag>invalid-value</error-tag>\n"
+        + "        <error-severity>error</error-severity>\n"
+        + "        <error-path xmlns:t=\"http://example.com/schema/1.2/config\">/t:top/t:interface[t:name=\"Ethernet1/0\"]/t:address/t:name</error-path>\n"
+        + "        <error-message>Invalid IP address for interface Ethernet1/0</error-message>\n"
+        + "    </rpc-error>\n"
+        + "</rpc-reply>";
 
     @Test
     public void willParseRpcReplyWithoutNamespace() throws Exception {

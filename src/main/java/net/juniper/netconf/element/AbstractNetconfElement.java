@@ -18,13 +18,18 @@ import lombok.experimental.NonFinal;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+/**
+ * The base class from which all other NETCONF elements extend.
+ */
 @Value
 @NonFinal
 public abstract class AbstractNetconfElement {
 
     public static final String DEVICE_PROMPT = "]]>]]>";
-    public static final String URN_XML_NS_NETCONF_BASE_1_0 = "urn:ietf:params:xml:ns:netconf:base:1.0";
-    public static final String URN_IETF_PARAMS_NETCONF_BASE_1_0 = "urn:ietf:params:netconf:base:1.0";
+    public static final String URN_XML_NS_NETCONF_BASE_1_0 =
+        "urn:ietf:params:xml:ns:netconf:base:1.0";
+    public static final String URN_IETF_PARAMS_NETCONF_BASE_1_0 =
+        "urn:ietf:params:netconf:base:1.0";
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
@@ -66,7 +71,10 @@ public abstract class AbstractNetconfElement {
     }
 
     protected static String getXpathFor(final String elementName) {
-        return format("/*[namespace-uri()='urn:ietf:params:xml:ns:netconf:base:1.0' and local-name()='%s']", elementName);
+        return format(
+            "/*[namespace-uri()='urn:ietf:params:xml:ns:netconf:base:1.0' and local-name()='%s']",
+            elementName
+        );
     }
 
     protected static Element appendElementWithText(
@@ -74,10 +82,12 @@ public abstract class AbstractNetconfElement {
         final Element parentElement,
         final String namespacePrefix,
         final String elementName,
-        final String text) {
+        final String text
+    ) {
 
         if (text != null) {
-            final Element childElement = document.createElementNS(URN_XML_NS_NETCONF_BASE_1_0, elementName);
+            final Element childElement =
+                document.createElementNS(URN_XML_NS_NETCONF_BASE_1_0, elementName);
             childElement.setPrefix(namespacePrefix);
             childElement.setTextContent(text);
             parentElement.appendChild(childElement);

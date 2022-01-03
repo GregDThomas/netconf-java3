@@ -114,7 +114,7 @@ public class Device {
 
     /**
      * How often to send an SSH session heartbeat. Defaults to 60 seconds. Set to
-     * {@code Duration.ZERO} to disable.
+     * {@code Duration.ZERO} to disable session heartbeats.
      */
     Duration sessionHeartbeatInterval;
 

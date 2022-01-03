@@ -15,6 +15,7 @@ import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.channel.ClientChannel;
 import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.common.channel.Channel;
+import org.apache.sshd.common.session.SessionHeartbeatController;
 
 /**
  * An implementation of {@link NetconfSshSession} that uses the
@@ -61,6 +62,12 @@ public class MinaSshSession implements NetconfSshSession {
                 .connect(device.getUsername(), device.getAddress(), device.getPort())
                 .verify(device.getConnectTimeout())
                 .getSession();
+            if (device.getSessionHeartbeatInterval().toMillis() > 0) {
+                clientSession.setSessionHeartbeat(
+                    SessionHeartbeatController.HeartbeatType.IGNORE,
+                    device.getSessionHeartbeatInterval()
+                );
+            }
         } catch (final IOException e) {
             close();
             throw new NetconfConnectException(

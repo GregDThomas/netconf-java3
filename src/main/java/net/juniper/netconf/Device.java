@@ -47,7 +47,6 @@ import net.juniper.netconf.exception.NetconfException;
 public class Device {
 
     // TODO: Add option to verify server RSA keys
-    // TODO: Add option to set session heartbeat
 
     /**
      * The DNS or IP address of the device to connect to. Must be specified.
@@ -114,8 +113,13 @@ public class Device {
     Duration readTimeout;
 
     /**
+     * How often to send an SSH session heartbeat. Defaults to 60 seconds. Set to
+     * {@code Duration.ZERO} to disable.
+     */
+    Duration sessionHeartbeatInterval;
+
+    /**
      * The class used to connect an SSH session to the device. Defaults to {@link MinaSshSession}
-     * if not supplied.
      */
     Class<? extends NetconfSshSession> sshImplementation;
 
@@ -129,6 +133,7 @@ public class Device {
         final Duration connectTimeout,
         final Duration loginTimeout,
         final Duration readTimeout,
+        final Duration sessionHeartbeatInterval,
         final Class<? extends NetconfSshSession> sshImplementation
     ) {
         this.address = address;
@@ -141,6 +146,8 @@ public class Device {
         this.connectTimeout = ofNullable(connectTimeout).orElseGet(() -> Duration.ofSeconds(5));
         this.loginTimeout = ofNullable(loginTimeout).orElse(this.connectTimeout);
         this.readTimeout = ofNullable(readTimeout).orElseGet(() -> Duration.ofSeconds(5));
+        this.sessionHeartbeatInterval =
+            ofNullable(sessionHeartbeatInterval).orElseGet(() -> Duration.ofSeconds(60));
         this.sshImplementation =
             Optional.<Class<? extends NetconfSshSession>>ofNullable(sshImplementation)
                 .orElse(MinaSshSession.class);

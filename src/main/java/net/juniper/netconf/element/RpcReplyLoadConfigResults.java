@@ -15,7 +15,7 @@ import lombok.Singular;
 import lombok.ToString;
 import lombok.Value;
 import lombok.experimental.NonFinal;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -25,8 +25,8 @@ import org.xml.sax.SAXException;
  * Class to represent a NETCONF load-configuration-results rpc-reply element -
  * https://www.juniper.net/documentation/us/en/software/junos/netconf/junos-xml-protocol/topics/ref/tag/junos-xml-protocol-load-configuration-results.html
  */
-@Slf4j
 @Value
+@Log4j2
 @NonFinal
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)

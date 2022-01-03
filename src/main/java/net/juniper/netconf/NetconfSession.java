@@ -7,6 +7,7 @@ import javax.xml.xpath.XPathExpressionException;
 import lombok.extern.log4j.Log4j2;
 import net.juniper.netconf.element.Hello;
 import net.juniper.netconf.exception.NetconfException;
+import org.apache.logging.log4j.CloseableThreadContext;
 import org.xml.sax.SAXException;
 
 /**
@@ -15,26 +16,41 @@ import org.xml.sax.SAXException;
 @Log4j2
 public class NetconfSession implements AutoCloseable {
 
+    private static final String NSI = "NSI";
+    private static long nextNetconfSessionId = 1;
+    private final String currentNetconfSessionId;
     private final Device device;
     private final NetconfSshSession netconfSshSession;
     private Hello serverHello;
 
+    private static String getNextNetconfSessionId() {
+        return String.valueOf(nextNetconfSessionId++);
+    }
+
     NetconfSession(final Device device) {
-        this.device = device;
-        try {
-            netconfSshSession = device.getSshImplementation().newInstance();
-        } catch (final InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(
-                "Unable to instantiate instance of class "
-                    + device.getSshImplementation().getName(),
-                e
-            );
+        this.currentNetconfSessionId = getNextNetconfSessionId();
+        try (final CloseableThreadContext.Instance ignored
+                 = CloseableThreadContext.put(NSI, currentNetconfSessionId)) {
+            this.device = device;
+            try {
+                this.netconfSshSession = device.getSshImplementation().newInstance();
+            } catch (final InstantiationException | IllegalAccessException e) {
+                throw new RuntimeException(
+                    "Unable to instantiate instance of class "
+                        + device.getSshImplementation().getName(),
+                    e
+                );
+            }
+            log.info("New NetconfSession created");
         }
     }
 
     void connect() throws NetconfException {
-        netconfSshSession.openSession(device);
-        sendHello();
+        try (final CloseableThreadContext.Instance ignored
+                 = CloseableThreadContext.put(NSI, currentNetconfSessionId)) {
+            netconfSshSession.openSession(device);
+            sendHello();
+        }
     }
 
     /**
@@ -43,13 +59,20 @@ public class NetconfSession implements AutoCloseable {
      * @return {@code true} if the NETCONF session is connected, otherwise {@code false}.
      */
     public boolean isConnected() {
-        return serverHello != null && netconfSshSession.isConnected();
+        try (final CloseableThreadContext.Instance ignored
+                 = CloseableThreadContext.put(NSI, currentNetconfSessionId)) {
+            return serverHello != null && netconfSshSession.isConnected();
+        }
     }
 
     @Override
     public void close() {
-        netconfSshSession.close();
-        log.info("Disconnected from {}:{}", device::getAddress, device::getPort);
+        try (final CloseableThreadContext.Instance ignored
+                 = CloseableThreadContext.put(NSI, currentNetconfSessionId)) {
+            // TODO: Send a close-session rpc
+            netconfSshSession.close();
+            log.info("Disconnected from {}:{}", device::getAddress, device::getPort);
+        }
     }
 
     private void sendHello() throws NetconfException {

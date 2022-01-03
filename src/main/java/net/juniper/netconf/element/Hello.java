@@ -15,7 +15,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Singular;
 import lombok.ToString;
 import lombok.Value;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -26,8 +26,8 @@ import org.xml.sax.SAXException;
 /**
  * Class to represent a NETCONF hello element - https://datatracker.ietf.org/doc/html/rfc6241#section-8.1
  */
-@Slf4j
 @Value
+@Log4j2
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "There is little alternative")
@@ -87,7 +87,7 @@ public class Hello extends AbstractNetconfElement {
             builder.capability(node.getTextContent());
         }
         final Hello hello = builder.build();
-        log.debug("hello is: {}", hello.getXml());
+        log.trace("hello is: {}", hello::getXml);
         return hello;
     }
 

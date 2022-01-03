@@ -19,7 +19,7 @@ import lombok.Singular;
 import lombok.ToString;
 import lombok.Value;
 import lombok.experimental.NonFinal;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -29,8 +29,8 @@ import org.xml.sax.SAXException;
 /**
  * Class to represent a NETCONF rpc-reply element - https://datatracker.ietf.org/doc/html/rfc6241#section-4.2
  */
-@Slf4j
 @Value
+@Log4j2
 @NonFinal
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
@@ -152,7 +152,7 @@ public class RpcReply extends AbstractNetconfElement {
             .errors(errorList)
             .originalDocument(document)
             .build();
-        log.info("rpc-reply is: {}", rpcReply.getXml());
+        log.trace("rpc-reply is: {}", rpcReply::getXml);
         return (T) rpcReply;
     }
 

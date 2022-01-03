@@ -6,6 +6,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import lombok.extern.log4j.Log4j2;
 import net.juniper.netconf.element.Hello;
+import net.juniper.netconf.element.RpcCloseSession;
 import net.juniper.netconf.exception.NetconfException;
 import org.apache.logging.log4j.CloseableThreadContext;
 import org.xml.sax.SAXException;
@@ -21,6 +22,7 @@ public class NetconfSession implements AutoCloseable {
     private final String currentNetconfSessionId;
     private final Device device;
     private final NetconfSshSession netconfSshSession;
+    private long nextMessageId = 1;
     private Hello serverHello;
 
     private static String getNextNetconfSessionId() {
@@ -66,10 +68,15 @@ public class NetconfSession implements AutoCloseable {
     }
 
     @Override
-    public void close() {
+    public void close() throws NetconfException {
         try (final CloseableThreadContext.Instance ignored
                  = CloseableThreadContext.put(NSI, currentNetconfSessionId)) {
-            // TODO: Send a close-session rpc
+            if (netconfSshSession.isConnected()) {
+                netconfSshSession.sendMessage(RpcCloseSession.builder()
+                    .messageId(String.valueOf(nextMessageId++))
+                    .build()
+                    .getXml());
+            }
             netconfSshSession.close();
             log.info("Disconnected from {}:{}", device::getAddress, device::getPort);
         }

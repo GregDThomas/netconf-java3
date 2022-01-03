@@ -32,11 +32,20 @@ public abstract class AbstractNetconfElement {
     public static final String URN_IETF_PARAMS_NETCONF_BASE_1_0 =
         "urn:ietf:params:netconf:base:1.0";
 
+    /**
+     * The W3C document representing this element. Note that although ths field is mutable, it
+     * should not be changed. Altering this field will not change any properties of this class,
+     * not even it's XML representation. It can however be used to extract additional information
+     * received in the message that is not directly exposed by the class.
+     */
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "There is little alternative")
     Document document;
 
+    /**
+     * The XML representation of this element.
+     */
     @ToString.Exclude
     String xml;
 

@@ -82,6 +82,33 @@ public class NetconfSession implements AutoCloseable {
         }
     }
 
+
+    /*
+        TODO:
+        1. Make the capabilities flexible
+        2. request-reboot
+        3. execute arbitrary rpc
+        4. lock-config
+        5. unlock-config
+        6. load-config (XML)
+        7. load-config (text)
+        8. load-set-config
+        9. load-xml-file
+        10. load-text-file
+        11. load-set-file
+        12. commit
+        13. commit-confirm
+        14. commit-full
+        15. commit-config
+        16. get-candidate/running-config
+        17. get-running-config-and-state
+        18. get-data
+        19. validate
+        20. run-cli
+        21. close-config
+     */
+
+
     private void sendHello() throws NetconfException {
         final Hello clientHello = Hello.builder().capabilities(
             Arrays.asList(Hello.URN_IETF_PARAMS_NETCONF_BASE_1_0,

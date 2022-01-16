@@ -13,6 +13,7 @@ import net.juniper.netconf.exception.NetconfConnectException;
 import net.juniper.netconf.exception.NetconfException;
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.channel.ClientChannel;
+import org.apache.sshd.client.keyverifier.DefaultKnownHostsServerKeyVerifier;
 import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.common.channel.Channel;
 import org.apache.sshd.common.session.SessionHeartbeatController;
@@ -58,6 +59,9 @@ public class MinaSshSession implements NetconfSshSession {
             log.debug("Connecting to device at {}:{}",
                 device::getAddress, device::getPort
             );
+            if (device.getUseKnownHostsFile()) {
+                sshClient.setServerKeyVerifier(getKnownHostsServerKeyVerifier());
+            }
             clientSession = sshClient
                 .connect(device.getUsername(), device.getAddress(), device.getPort())
                 .verify(device.getConnectTimeout())
@@ -75,6 +79,13 @@ public class MinaSshSession implements NetconfSshSession {
                     device.getAddress(), device.getPort()
                 ), e);
         }
+    }
+
+    private static DefaultKnownHostsServerKeyVerifier getKnownHostsServerKeyVerifier() {
+        return new DefaultKnownHostsServerKeyVerifier((clientSession, remoteAddress, serverKey) -> {
+            log.info("Unable to connect to {} - unrecognised server key", remoteAddress);
+            return false;
+        }, true);
     }
 
     private void login() throws NetconfException {

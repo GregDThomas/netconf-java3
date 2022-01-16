@@ -96,6 +96,12 @@ public class Device {
     String maskedPrivateKey;
 
     /**
+     * If set to {@code true}, the client will verify the server against the known hosts file,
+     * {@code ~/.ssh/known_hosts}. Defaults to {@code false}.
+     */
+    Boolean useKnownHostsFile;
+
+    /**
      * The maximum amount of time to wait when attempting to connect to the device. Defaults to
      * five seconds.
      */
@@ -130,6 +136,7 @@ public class Device {
         @NonNull final String username,
         final String password,
         final String privateKey,
+        final Boolean useKnownHostsFile,
         final Duration connectTimeout,
         final Duration loginTimeout,
         final Duration readTimeout,
@@ -143,6 +150,7 @@ public class Device {
         this.maskedPassword = password == null ? null : "********";
         this.privateKey = privateKey;
         this.maskedPrivateKey = privateKey == null ? null : "****************";
+        this.useKnownHostsFile = useKnownHostsFile;
         this.connectTimeout = ofNullable(connectTimeout).orElseGet(() -> Duration.ofSeconds(5));
         this.loginTimeout = ofNullable(loginTimeout).orElse(this.connectTimeout);
         this.readTimeout = ofNullable(readTimeout).orElseGet(() -> Duration.ofSeconds(5));

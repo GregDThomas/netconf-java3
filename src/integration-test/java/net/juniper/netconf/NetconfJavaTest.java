@@ -44,6 +44,7 @@ class NetconfJavaTest {
             .username(deviceDetails.get("username"))
             .password(deviceDetails.get("password"))
             .privateKey(deviceDetails.get("privateKey"))
+            .useKnownHostsFile(Boolean.valueOf(deviceDetails.get("useKnownHostsFile")))
             .connectTimeout(ofNullable(deviceDetails.get("connectTimeout"))
                 .map(Duration::parse)
                 .orElse(null))

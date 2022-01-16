@@ -5,8 +5,8 @@ import com.github.spotbugs.snom.SpotBugsTask
 plugins {
     id 'java-library'
     id 'checkstyle'
-    id 'com.github.spotbugs' version '5.0.3'
-    id 'com.github.ben-manes.versions' version '0.40.0'
+    id 'com.github.spotbugs' version '5.0.4'
+    id 'com.github.ben-manes.versions' version '0.41.0'
 }
 
 java {
@@ -123,7 +123,7 @@ dependencies {
     // Use JUnit Jupiter for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
     testImplementation "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}"
-    testImplementation 'org.assertj:assertj-core:3.21.0'
+    testImplementation 'org.assertj:assertj-core:3.22.0'
     testImplementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
     testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
     testImplementation 'org.xmlunit:xmlunit-assertj:2.8.4'
